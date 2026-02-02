@@ -1,12 +1,11 @@
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 import time
+import os
 
 app = Flask(__name__)
 
@@ -15,32 +14,31 @@ VTOP_REGNO = "23BCE9275"
 VTOP_PASSWORD = "Leodas@7106"
 # --------------------------------------------
 
-@app.route("/")
-def home():
-    return "WhatsApp VTOP Bot is Running 🚀"
-
-def get_attendance_from_vtop():
+def get_driver():
     options = Options()
-    options.add_argument("--headless")
+    options.add_argument("--headless=new")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--window-size=1920,1080")
 
-    driver = webdriver.Chrome(
-        service=Service(ChromeDriverManager().install()),
-        options=options
-    )
+    # IMPORTANT for Render:
+    options.binary_location = "/usr/bin/chromium"
+
+    return webdriver.Chrome(options=options)
+
+def get_attendance_from_vtop():
+    driver = get_driver()
 
     try:
         driver.get("https://vtop.vitap.ac.in/vtop/login")
-        time.sleep(5)
+        time.sleep(6)
 
-        # Login
         driver.find_element(By.ID, "regno").send_keys(VTOP_REGNO)
         driver.find_element(By.ID, "passwd").send_keys(VTOP_PASSWORD)
         driver.find_element(By.ID, "loginsubmit").click()
         time.sleep(8)
 
-        # Go to Attendance page
         driver.get("https://vtop.vitap.ac.in/vtop/student/attendance")
         time.sleep(8)
 
@@ -48,7 +46,6 @@ def get_attendance_from_vtop():
         soup = BeautifulSoup(html, "html.parser")
 
         rows = soup.find_all("tr")
-
         result = "📚 *Your Attendance*\n\n"
 
         for row in rows:
@@ -67,9 +64,13 @@ def get_attendance_from_vtop():
         return result
 
     except Exception as e:
-        return "Error fetching attendance. Try again later."
+        return "⚠️ Error fetching attendance. Try again."
     finally:
         driver.quit()
+
+@app.route("/")
+def home():
+    return "WhatsApp VTOP Bot is Running 🚀"
 
 @app.route("/whatsapp", methods=["POST"])
 def whatsapp_reply():
