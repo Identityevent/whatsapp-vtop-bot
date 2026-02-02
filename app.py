@@ -1,7 +1,7 @@
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
 
-app = Flask(_name_)   # <-- THIS LINE IS THE FIX
+app = Flask(__name__)   # <-- CORRECT LINE
 
 @app.route("/")
 def home():
