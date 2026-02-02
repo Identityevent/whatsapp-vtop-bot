@@ -1,7 +1,7 @@
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
 
-app = Flask(_name_)
+app = Flask(_name_)   # <-- THIS LINE IS THE FIX
 
 @app.route("/")
 def home():
@@ -26,6 +26,3 @@ def whatsapp_reply():
         msg.body("Send: hello, attendance, or marks")
 
     return str(reply)
-
-if _name_ == "_main_":
-    app.run(debug=True)
