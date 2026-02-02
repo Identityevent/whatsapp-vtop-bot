@@ -1,3 +1,6 @@
 flask==2.3.3
 twilio
 gunicorn
+selenium
+webdriver-manager
+beautifulsoup4
