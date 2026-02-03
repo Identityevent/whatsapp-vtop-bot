@@ -1,3 +1,5 @@
+import setuptools  # <-- ADD THIS LINE FIRST
+
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
 import undetected_chromedriver as uc
@@ -95,3 +97,4 @@ def whatsapp_reply():
         msg.body("Send: attendance")
 
     return str(reply)
+
