@@ -1,6 +1,6 @@
 flask==2.3.3
 twilio
 gunicorn
-selenium
 beautifulsoup4
 chromedriver-binary
+
