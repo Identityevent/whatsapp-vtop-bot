@@ -1,7 +1,6 @@
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 import time
@@ -25,7 +24,8 @@ def get_driver():
     # IMPORTANT for Render:
     options.binary_location = "/usr/bin/chromium"
 
-    return webdriver.Chrome(options=options)
+    return driver = uc.Chrome(headless=True)
+
 
 def get_attendance_from_vtop():
     driver = get_driver()
@@ -87,3 +87,4 @@ def whatsapp_reply():
         msg.body("Send: attendance")
 
     return str(reply)
+
