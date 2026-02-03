@@ -14,17 +14,21 @@ VTOP_PASSWORD = "Leodas@7106"
 # --------------------------------------------
 
 def get_driver():
-    options = Options()
+    """
+    Creates a headless Chrome that works on Render
+    """
+    options = uc.ChromeOptions()
     options.add_argument("--headless=new")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
     options.add_argument("--window-size=1920,1080")
 
-    # IMPORTANT for Render:
+    # This line is critical for Render
     options.binary_location = "/usr/bin/chromium"
 
-    return driver = uc.Chrome(headless=True)
+    driver = uc.Chrome(options=options)
+    return driver
 
 
 def get_attendance_from_vtop():
@@ -64,13 +68,17 @@ def get_attendance_from_vtop():
         return result
 
     except Exception as e:
+        print("Error:", e)
         return "⚠️ Error fetching attendance. Try again."
+
     finally:
         driver.quit()
+
 
 @app.route("/")
 def home():
     return "WhatsApp VTOP Bot is Running 🚀"
+
 
 @app.route("/whatsapp", methods=["POST"])
 def whatsapp_reply():
@@ -87,4 +95,3 @@ def whatsapp_reply():
         msg.body("Send: attendance")
 
     return str(reply)
-
